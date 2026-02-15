@@ -199,7 +199,7 @@ input[type="file"] { display: none; }
 
 .frame-card:hover {
     transform: translateY(-8px) rotate(0deg) !important;
-    z-index: 10 !important;
+    z-index: 9999 !important;
 }
 
 .frame-card:hover .frame-image {
