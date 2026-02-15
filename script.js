@@ -13,6 +13,7 @@ const progressText = document.getElementById('progressText');
 
 let currentFrames = [];
 let currentFileName = '';
+let currentGifUrl = null;
 
 uploadZone.addEventListener('click', () => fileInput.click());
 
@@ -40,6 +41,13 @@ fileInput.addEventListener('change', (e) => {
 async function handleFile(file) {
     currentFileName = file.name.replace(/\.[^/.]+$/, "");
     currentFrames = [];
+    
+    // Store and display original GIF
+    if (currentGifUrl) {
+        URL.revokeObjectURL(currentGifUrl);
+    }
+    currentGifUrl = URL.createObjectURL(file);
+    document.getElementById('gifImage').src = currentGifUrl;
     
     filmScroll.innerHTML = '';
     filmContainer.classList.remove('visible');
@@ -163,8 +171,6 @@ function renderFilmStrip() {
         imgWrap.appendChild(dlBtn);
         card.appendChild(imgWrap);
         
-        card.onclick = () => openModal(idx);
-        
         filmScroll.appendChild(card);
     });
 }
@@ -179,9 +185,6 @@ function downloadFrame(idx) {
 
 document.getElementById('downloadAll').addEventListener('click', async () => {
     if (!currentFrames.length) return;
-    const btn = document.getElementById('downloadAll');
-    const original = btn.textContent;
-    btn.textContent = 'Zipping...';
     
     try {
         const zip = new JSZip();
@@ -194,39 +197,19 @@ document.getElementById('downloadAll').addEventListener('click', async () => {
         saveAs(blob, `${currentFileName}_frames.zip`);
     } catch(e) {
         currentFrames.forEach((_, i) => setTimeout(() => downloadFrame(i), i * 100));
-    } finally {
-        btn.textContent = original;
     }
 });
 
-window.openModal = function(idx) {
-    const modal = document.getElementById('modal');
-    const img = document.getElementById('modalImg');
-    const dl = document.getElementById('modalDownload');
-    
-    img.src = currentFrames[idx].canvas.toDataURL('image/png');
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-    
-    dl.onclick = () => downloadFrame(idx);
-};
 
-window.closeModal = function(e) {
-    if (e.target.id === 'modal') {
-        document.getElementById('modal').classList.remove('active');
-        document.body.style.overflow = '';
-    }
-};
-
-window.closeModalBtn = function(e) {
-    e.stopPropagation();
-    document.getElementById('modal').classList.remove('active');
-    document.body.style.overflow = '';
-};
 
 window.resetApp = function() {
     currentFrames = [];
     currentFileName = '';
+    if (currentGifUrl) {
+        URL.revokeObjectURL(currentGifUrl);
+        currentGifUrl = null;
+    }
+    document.getElementById('gifImage').src = '';
     filmScroll.innerHTML = '';
     filmContainer.classList.remove('visible');
     infoFooter.classList.remove('visible');
@@ -237,9 +220,21 @@ window.resetApp = function() {
     loading.classList.remove('active');
 };
 
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-        document.getElementById('modal').classList.remove('active');
-        document.body.style.overflow = '';
+// Load preloaded demo GIF
+async function loadPreloadedGif() {
+    try {
+        const response = await fetch('./ryo.gif');
+        if (!response.ok) throw new Error('Failed to load demo GIF');
+        const blob = await response.blob();
+        const file = new File([blob], 'ryo.gif', { type: 'image/gif' });
+        handleFile(file);
+    } catch (err) {
+        console.error('Error loading preloaded GIF:', err);
+        alert('Error loading demo GIF: ' + err.message);
     }
-});
+}
+
+// Auto-load preloaded GIF on page load
+loadPreloadedGif();
+
+

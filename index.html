@@ -8,13 +8,12 @@
     <script src="https://unpkg.com/file-saver@2.0.5/dist/FileSaver.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <header class="header">
-        <h1>Film Strip</h1>
         <p>Extract frames from animated GIFs</p>
     </header>
 
@@ -26,7 +25,7 @@
                 <polyline points="17 8 12 3 7 8"></polyline>
                 <line x1="12" y1="3" x2="12" y2="15"></line>
             </svg>
-            <div class="upload-text">Drop GIF or tap to browse</div>
+            <div class="upload-text">UPLOAD A GIF</div>
             <div class="upload-hint">Supports animated GIFs, preserves transparency</div>
             
             <div class="progress-wrap" id="progressWrap">
@@ -44,7 +43,25 @@
     </div>
 
     <div class="film-container" id="filmContainer">
+        <div class="original-gif" id="originalGif">
+            <img id="gifImage" src="" alt="Original GIF">
+        </div>
         <div class="film-scroll" id="filmScroll"></div>
+        <div class="frame-actions" id="frameActions">
+            <button class="btn btn-icon btn-primary" id="downloadAll" title="Download All">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+            </button>
+            <button class="btn btn-icon btn-secondary" onclick="resetApp()" title="Reset">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                    <path d="M3 3v5h5"></path>
+                </svg>
+            </button>
+        </div>
     </div>
 
     <div class="info-footer" id="infoFooter">
@@ -65,22 +82,10 @@
                     <span id="durVal">-</span>
                 </div>
             </div>
-            <div class="actions-row">
-                <button class="btn btn-primary" id="downloadAll">Download All</button>
-                <button class="btn btn-secondary" onclick="resetApp()">New GIF</button>
-            </div>
         </div>
     </div>
 
-    <div class="modal" id="modal" onclick="closeModal(event)">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <button class="modal-close" onclick="closeModalBtn(event)">×</button>
-            <img id="modalImg" src="" alt="Frame">
-            <div class="modal-actions">
-                <button class="btn btn-primary" id="modalDownload">Download PNG</button>
-            </div>
-        </div>
-    </div>
+
 
     <script type="module" src="script.js"></script>
 </body>
