@@ -1,5 +1,19 @@
 import { parseGIF, decompressFrames } from 'https://esm.sh/gifuct-js@2.0.0';
 
+function createPatchCanvas(frame) {
+    const canvas = document.createElement('canvas');
+    canvas.width = frame.dims.width;
+    canvas.height = frame.dims.height;
+    const ctx = canvas.getContext('2d');
+    const imgData = new ImageData(
+        new Uint8ClampedArray(frame.patch),
+        frame.dims.width,
+        frame.dims.height
+    );
+    ctx.putImageData(imgData, 0, 0);
+    return canvas;
+}
+
 const uploadZone = document.getElementById('uploadZone');
 const uploadContainer = document.getElementById('uploadContainer');
 const fileInput = document.getElementById('fileInput');
@@ -84,20 +98,23 @@ async function handleFile(file) {
         for (let i = 0; i < frames.length; i++) {
             const frame = frames[i];
             
-            const patchCanvas = document.createElement('canvas');
-            patchCanvas.width = frame.dims.width;
-            patchCanvas.height = frame.dims.height;
-            const patchCtx = patchCanvas.getContext('2d');
+            const patchCanvas = createPatchCanvas(frame);
             
-            const imgData = new ImageData(
-                new Uint8ClampedArray(frame.patch),
-                frame.dims.width,
-                frame.dims.height
-            );
-            patchCtx.putImageData(imgData, 0, 0);
-            
-            if (i > 0 && frames[i-1].disposalType === 2) {
-                ctx.clearRect(0, 0, width, height);
+            if (i > 0) {
+                const prev = frames[i - 1];
+                if (prev.disposalType === 2) {
+                    ctx.clearRect(0, 0, width, height);
+                } else if (prev.disposalType === 3 && i > 1) {
+                    // Restore to previous - re-render from start up to i-2
+                    ctx.clearRect(0, 0, width, height);
+                    for (let j = 0; j < i - 1; j++) {
+                        const f = frames[j];
+                        const skip = j > 0 && frames[j - 1].disposalType === 3;
+                        if (!skip) {
+                            ctx.drawImage(createPatchCanvas(f), f.dims.left, f.dims.top);
+                        }
+                    }
+                }
             }
             
             ctx.drawImage(patchCanvas, frame.dims.left, frame.dims.top);
@@ -203,6 +220,11 @@ document.getElementById('downloadAll').addEventListener('click', async () => {
 
 
 window.resetApp = function() {
+    // Clear canvas references to free memory
+    currentFrames.forEach(f => {
+        f.canvas.width = 0;
+        f.canvas.height = 0;
+    });
     currentFrames = [];
     currentFileName = '';
     if (currentGifUrl) {
