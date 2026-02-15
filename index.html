@@ -59,13 +59,14 @@
 
         .upload-container {
             padding: 0 1.5rem;
-            margin: 2rem 0;
+            margin: 2rem auto;
+            max-width: 420px;
         }
 
         .upload-zone {
             border: 1.5px dashed var(--border);
-            border-radius: 16px;
-            padding: 3rem 2rem;
+            border-radius: 12px;
+            padding: 1.5rem 1.25rem;
             text-align: center;
             background: var(--surface);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -90,22 +91,22 @@
         }
 
         .upload-icon {
-            width: 48px;
-            height: 48px;
-            margin: 0 auto 1rem;
+            width: 28px;
+            height: 28px;
+            margin: 0 auto 0.5rem;
             color: var(--text-secondary);
             stroke-width: 1.5;
         }
 
         .upload-text {
-            font-size: 0.9375rem;
+            font-size: 0.875rem;
             font-weight: 500;
             color: var(--text);
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.125rem;
         }
 
         .upload-hint {
-            font-size: 0.8125rem;
+            font-size: 0.75rem;
             color: var(--text-secondary);
         }
 
@@ -298,7 +299,7 @@
 
         .info-footer {
             display: none;
-            padding: 1.5rem;
+            padding: 0.75rem 1rem;
             text-align: center;
             border-top: 1px solid var(--border);
             margin-top: auto;
@@ -317,26 +318,28 @@
 
         .info-content {
             display: inline-flex;
-            flex-direction: column;
+            flex-direction: row;
             align-items: center;
-            gap: 1rem;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .meta-row {
             display: flex;
-            gap: 2rem;
+            gap: 1rem;
             justify-content: center;
             flex-wrap: wrap;
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.125rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8125rem;
             color: var(--text);
-            letter-spacing: 0.02em;
+            letter-spacing: 0.01em;
         }
 
         .meta-item-inline {
             display: inline-flex;
-            align-items: baseline;
-            gap: 0.5rem;
+            align-items: center;
+            gap: 0.375rem;
         }
 
         .meta-separator {
@@ -345,9 +348,9 @@
         }
 
         .meta-label-sub {
-            font-size: 0.75rem;
+            font-size: 0.6875rem;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.08em;
             color: var(--text-secondary);
             font-family: 'Inter', sans-serif;
             font-weight: 500;
@@ -355,21 +358,20 @@
 
         .actions-row {
             display: flex;
-            gap: 0.75rem;
-            margin-top: 0.5rem;
+            gap: 0.5rem;
         }
 
         .btn {
-            padding: 0.5rem 1.25rem;
-            border-radius: 8px;
-            font-size: 0.8125rem;
+            padding: 0.375rem 0.875rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
             font-weight: 500;
             border: none;
             cursor: pointer;
             transition: all 0.2s;
             display: inline-flex;
             align-items: center;
-            gap: 0.375rem;
+            gap: 0.25rem;
             font-family: 'Inter', sans-serif;
         }
 
@@ -452,8 +454,8 @@
 
         .modal-actions {
             display: flex;
-            gap: 0.75rem;
-            margin-top: 1rem;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
             justify-content: center;
         }
 
@@ -497,7 +499,7 @@
             }
 
             .upload-zone {
-                padding: 2rem 1.5rem;
+                padding: 1.25rem 1rem;
             }
 
             .frame-card {
@@ -525,8 +527,12 @@
             }
 
             .meta-row {
+                gap: 0.75rem;
+                font-size: 0.75rem;
+            }
+
+            .info-content {
                 gap: 1rem;
-                font-size: 1rem;
             }
 
             .meta-separator {
