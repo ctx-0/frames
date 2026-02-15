@@ -242,21 +242,5 @@ window.resetApp = function() {
     loading.classList.remove('active');
 };
 
-// Load preloaded demo GIF
-async function loadPreloadedGif() {
-    try {
-        const response = await fetch('./ryo.gif');
-        if (!response.ok) throw new Error('Failed to load demo GIF');
-        const blob = await response.blob();
-        const file = new File([blob], 'ryo.gif', { type: 'image/gif' });
-        handleFile(file);
-    } catch (err) {
-        console.error('Error loading preloaded GIF:', err);
-        alert('Error loading demo GIF: ' + err.message);
-    }
-}
-
-// Auto-load preloaded GIF on page load
-loadPreloadedGif();
 
 
