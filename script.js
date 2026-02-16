@@ -21,9 +21,7 @@ const filmScroll = document.getElementById('filmScroll');
 const filmContainer = document.getElementById('filmContainer');
 const infoFooter = document.getElementById('infoFooter');
 const loading = document.getElementById('loading');
-const progressWrap = document.getElementById('progressWrap');
-const progressFill = document.getElementById('progressFill');
-const progressText = document.getElementById('progressText');
+const loadingFilename = document.getElementById('loadingFilename');
 
 let currentFrames = [];
 let currentFileName = '';
@@ -56,18 +54,23 @@ async function handleFile(file) {
     currentFileName = file.name.replace(/\.[^/.]+$/, "");
     currentFrames = [];
     
-    // Store and display original GIF
+    // Store original GIF URL but don't display yet
     if (currentGifUrl) {
         URL.revokeObjectURL(currentGifUrl);
     }
     currentGifUrl = URL.createObjectURL(file);
-    document.getElementById('gifImage').src = currentGifUrl;
     
+    // Clear and hide everything first
     filmScroll.innerHTML = '';
     filmContainer.classList.remove('visible');
     infoFooter.classList.remove('visible');
     uploadContainer.style.display = 'none';
     loading.classList.add('active');
+    
+    // Show filename in loading screen
+    if (loadingFilename) {
+        loadingFilename.textContent = file.name;
+    }
     
     try {
         const buffer = await file.arrayBuffer();
@@ -82,19 +85,23 @@ async function handleFile(file) {
         const height = gif.lsd.height;
         const totalDuration = frames.reduce((sum, f) => sum + (f.delay || 100), 0);
 
+        // Update info footer data
         document.getElementById('dimVal').textContent = `${width}×${height}`;
         document.getElementById('frameVal').textContent = frames.length;
         document.getElementById('durVal').textContent = `${(totalDuration/1000).toFixed(1)}s`;
+
+        // Set CSS custom property for aspect ratio
+        const aspectRatio = width / height;
+        filmScroll.style.setProperty('--gif-aspect-ratio', aspectRatio);
 
         const mainCanvas = document.createElement('canvas');
         mainCanvas.width = width;
         mainCanvas.height = height;
         const ctx = mainCanvas.getContext('2d');
 
-        loading.classList.remove('active');
-        filmContainer.classList.add('visible');
-        progressWrap.classList.add('visible');
-
+        // Process all frames while keeping loading screen visible
+        const progressText = document.querySelector('#loading .loading-text');
+        
         for (let i = 0; i < frames.length; i++) {
             const frame = frames[i];
             
@@ -105,7 +112,6 @@ async function handleFile(file) {
                 if (prev.disposalType === 2) {
                     ctx.clearRect(0, 0, width, height);
                 } else if (prev.disposalType === 3 && i > 1) {
-                    // Restore to previous - re-render from start up to i-2
                     ctx.clearRect(0, 0, width, height);
                     for (let j = 0; j < i - 1; j++) {
                         const f = frames[j];
@@ -130,15 +136,24 @@ async function handleFile(file) {
                 index: i
             });
 
-            const pct = ((i + 1) / frames.length) * 100;
-            progressFill.style.width = `${pct}%`;
-            progressText.textContent = `Frame ${i + 1} of ${frames.length}`;
+            // Update progress text
+            if (progressText) {
+                progressText.textContent = `Decoding frames... ${i + 1} / ${frames.length}`;
+            }
             
-            if (i % 2 === 0) await new Promise(r => requestAnimationFrame(r));
+            // Allow UI to breathe every few frames
+            if (i % 3 === 0) await new Promise(r => requestAnimationFrame(r));
         }
 
+        // All frames ready - build the DOM
         renderFilmStrip();
-        progressWrap.classList.remove('visible');
+        
+        // Set the GIF source
+        document.getElementById('gifImage').src = currentGifUrl;
+
+        // Hide loading, show everything at once
+        loading.classList.remove('active');
+        filmContainer.classList.add('visible');
         infoFooter.classList.add('visible');
         
     } catch (err) {
@@ -237,8 +252,7 @@ window.resetApp = function() {
     infoFooter.classList.remove('visible');
     uploadContainer.style.display = 'block';
     fileInput.value = '';
-    progressFill.style.width = '0%';
-    progressWrap.classList.remove('visible');
+    if (loadingFilename) loadingFilename.textContent = '';
     loading.classList.remove('active');
 };
 

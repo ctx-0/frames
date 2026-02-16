@@ -34,18 +34,16 @@
             <div class="upload-text">UPLOAD A GIF</div>
             <div class="upload-hint">Supports animated GIFs, preserves transparency</div>
             
-            <div class="progress-wrap" id="progressWrap">
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill"></div>
-                </div>
-                <div class="progress-text" id="progressText">Processing...</div>
-            </div>
+
         </div>
     </div>
 
     <div class="loading" id="loading">
-        <div class="spinner"></div>
-        <div>Decoding frames...</div>
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <div class="loading-text">Decoding frames...</div>
+            <div class="loading-filename" id="loadingFilename"></div>
+        </div>
     </div>
 
     <div class="film-container" id="filmContainer">
